@@ -3,8 +3,10 @@ import { ConvexError, v } from "convex/values";
 
 export const createDocument = mutation({
     args: {
-        title: v.string()
+        title: v.string(),
+        content: v.string(),
     },
+
     handler: async (ctx, args) => {
 
         const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
@@ -14,6 +16,7 @@ export const createDocument = mutation({
         }
         const document = await ctx.db.insert("documents", {
             title: args.title,
+            content: args.content,
             tokenIdentifier: userId
         });
         return document;
