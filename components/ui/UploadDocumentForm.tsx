@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
 import {
     Card,
     CardContent,
@@ -26,6 +27,7 @@ import {
 } from "@/components/ui/input-group"
 import { useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
+import { Loader2 } from "lucide-react"
 
 
 const formSchema = z.object({
@@ -37,9 +39,12 @@ const formSchema = z.object({
         .string()
         .min(10, "Description must be at least 10 characters.")
         .max(1000, "Description must be at most 1000 characters."),
+    file: z.instanceof(File),
+
 })
 
-export function UploadDocumentForm() {
+export function UploadDocumentForm({ onUpload }: { onUpload: () => void }) {
+    const generateUploadUrl = useMutation(api.documents.generateUploadUrl);
     const createDocument = useMutation(api.documents.createDocument);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -48,15 +53,22 @@ export function UploadDocumentForm() {
             description: "",
         },
     })
+    async function onSubmit(data: z.infer<typeof formSchema>) {
+        const uploadUrl = await generateUploadUrl();
 
-    function onSubmit(data: z.infer<typeof formSchema>) {
-    createDocument({
-        title: data.title,
-        content: data.description,
-    });
-
-    console.log(data);
-}
+        const result = await fetch(uploadUrl, {
+            method: "POST",
+            headers: { "Content-Type": data.file.type },
+            body: data.file,
+        });
+        const {storageId} = await result.json();
+        await createDocument({
+            title: data.title,
+            content: data.description,
+            fileId: storageId,
+        });
+        onUpload();
+    }
     return (
         <Card className="w-full sm:max-w-md">
             {/*<CardHeader>
@@ -90,6 +102,32 @@ export function UploadDocumentForm() {
                             )}
                         />
                         <Controller
+                            name="file"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel htmlFor="form-rhf-demo-title">
+                                        File
+                                    </FieldLabel>
+                                    <Input
+                                        type="file"
+                                        onChange={(e) => {
+                                            if (e.target.files) {
+                                                field.onChange(e.target.files[0]);
+                                            }
+                                        }}
+                                        accept=".txt, .doc, .docx, .pdf"
+                                        id="form-rhf-demo-title"
+                                        aria-invalid={fieldState.invalid}
+                                        autoComplete="off"
+                                    />
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </Field>
+                            )}
+                        />
+                        <Controller
                             name="description"
                             control={form.control}
                             render={({ field, fieldState }) => (
@@ -112,10 +150,6 @@ export function UploadDocumentForm() {
                                             </InputGroupText>
                                         </InputGroupAddon>
                                     </InputGroup>
-                                    {/*<FieldDescription>
-                                        Include steps to reproduce, expected behavior, and what
-                                        actually happened.
-                                    </FieldDescription>*/}
                                     {fieldState.invalid && (
                                         <FieldError errors={[fieldState.error]} />
                                     )}
@@ -130,8 +164,12 @@ export function UploadDocumentForm() {
                     <Button type="button" variant="outline" onClick={() => form.reset()}>
                         Reset
                     </Button>
-                    <Button type="submit" form="form-rhf-demo">
-                        Submit
+                    <Button type="submit" form="form-rhf-demo"
+                        className="flex items-center justify-center"
+                        disabled={form.formState.isSubmitting}
+                        onClick={() => { form.handleSubmit(onSubmit)() }}>
+                        {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {form.formState.isSubmitting ? "Uploading" : "Upload"}
                     </Button>
                 </Field>
             </CardFooter>

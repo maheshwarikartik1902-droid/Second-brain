@@ -6,5 +6,6 @@ export default defineSchema({
         title: v.string(),
         content: v.string(),
         tokenIdentifier: v.string(),
+        fileId: v.string(),
     }).index("by_token_identifier", ["tokenIdentifier"]),
 })
