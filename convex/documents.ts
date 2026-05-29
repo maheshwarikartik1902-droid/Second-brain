@@ -88,5 +88,11 @@ export const askQuestion = action({
         if(document.tokenIdentifier !== user) {
             throw new ConvexError("You are not the owner of this document");
         }
+
+        const file = await ctx.storage.get(document.fileId);
+        if(!file) {
+            throw new ConvexError("File not found");
+        }
+        
     },
 });
