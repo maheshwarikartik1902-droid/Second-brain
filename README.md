@@ -33,3 +33,24 @@ A clean, unified dashboard for personal notes, documentation, and knowledge mana
 | UI Components | shadcn/ui |
 | Styling | Tailwind CSS |
 | AI | Gemini API |
+
+## Project Structure
+ 
+```
+second-brain/
+├── app/                  # Next.js App Router pages and layouts
+├── components/           # Reusable UI components (shadcn + custom)
+├── convex/               # Convex schema, queries, mutations, and actions
+├── lib/                  # Utility functions and helpers
+└── public/               # Static assets
+```
+ 
+---
+ 
+## Roadmap
+ 
+- [ ] Folder/workspace organization
+- [ ] Full-text search across all documents and notes
+- [ ] Browser extension for web page capture
+- [ ] Export notes as Markdown or PDF
+- [ ] Collaborative shared workspaces
