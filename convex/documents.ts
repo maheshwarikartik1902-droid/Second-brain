@@ -84,7 +84,7 @@ export const askQuestion = action({
         });
         if(!document) {
             throw new ConvexError("Document not found");
-        }
+        }   
         if(document.tokenIdentifier !== user) {
             throw new ConvexError("You are not the owner of this document");
         }
