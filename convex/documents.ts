@@ -1,6 +1,9 @@
 import { api } from './_generated/api';
 import { action, mutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
+import { GoogleGenAI } from '@google/genai';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
 
 export const generateUploadUrl = mutation({
     args: {},
@@ -43,14 +46,14 @@ export const viewDocument = query({
         }
 
         const document = await ctx.db.get("documents", args.documentId);
-        if(!document) {
+        if (!document) {
             return null;
         }
-        if(document.tokenIdentifier !== userId) {
+        if (document.tokenIdentifier !== userId) {
             return null;
         }
-        
-        return {...document, documentUrl: await ctx.storage.getUrl(document.fileId)};
+
+        return { ...document, documentUrl: await ctx.storage.getUrl(document.fileId) };
     },
 
 })
@@ -75,24 +78,35 @@ export const askQuestion = action({
     },
     handler: async (ctx, args) => {
         const user = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
-        if(!user) {
+        if (!user) {
             throw new ConvexError("User not authenticated");
-        
+
         }
         const document = await ctx.runQuery(api.documents.viewDocument, {
             documentId: args.DocumentId
         });
-        if(!document) {
+        if (!document) {
             throw new ConvexError("Document not found");
-        }   
-        if(document.tokenIdentifier !== user) {
+        }
+        if (document.tokenIdentifier !== user) {
             throw new ConvexError("You are not the owner of this document");
         }
 
         const file = await ctx.storage.get(document.fileId);
-        if(!file) {
+        if (!file) {
             throw new ConvexError("File not found");
         }
-        
+        const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+
+        async function main() {
+            const response = await ai.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: 'Why is the sky blue?',
+            });
+            console.log(response.text);
+        }
+
+        main();
+
     },
 });

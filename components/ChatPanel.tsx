@@ -12,6 +12,8 @@ export default function ChatPanel() {
             <div className="flex gap-1">
                 <form onSubmit={(e) => {
                     e.preventDefault();
+                    //quiery for askQuestion
+                    
                 }}>
                     <Input required name="text" className="bg-black" />
                     <Button className="rounded-lg">Send</Button>
