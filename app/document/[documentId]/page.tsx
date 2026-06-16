@@ -4,6 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from '@/convex/_generated/dataModel';
 import React from "react";
 import ChatPanel from "@/components/ChatPanel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function DocumentPage({ params }: { params: Promise<{ documentId: Id<'documents'> }> }) {
     const { documentId } = React.use(params);
@@ -25,13 +26,24 @@ export default function DocumentPage({ params }: { params: Promise<{ documentId:
             <div className="flex justify-between items-center">
                 <h1 className="text-4xl font-bold">{document.title}</h1>
             </div>
-            <div className="flex gap-12">
-                <div className="bg-gray-900 py-4 rounded-md flex-1 h-100">
-                    {document.documentUrl && <iframe className="w-full h-full" src={document.documentUrl} />}
-                </div>
-                <div className="w-75 bg-gray-900">
-                    <ChatPanel DocumentId={document._id} />
-                </div>
+
+            <div className="flex gap-12 mt-6">
+                <Tabs defaultValue="account" className="w-full">
+                    <TabsList >
+                        <TabsTrigger value="account">Documents</TabsTrigger>
+                        <TabsTrigger value="password">Chat</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="account">
+                        <div className="bg-[#1d1e1f] py-4 rounded-md flex-1 h-100">
+                            {document.documentUrl && <iframe className="w-full h-full" src={document.documentUrl} />}
+                        </div>
+                    </TabsContent>
+                    <TabsContent value="password">
+                        <div className="h-[400px] bg-[#1d1e1f] ">
+                            <ChatPanel DocumentId={document._id} />
+                        </div>
+                    </TabsContent>
+                </Tabs>
             </div>
         </main>
     );

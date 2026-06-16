@@ -94,24 +94,38 @@ export const askQuestion = action({
         }
 
         const file = await ctx.storage.get(document.fileId);
-        console.log("file exists?", !!file);
 
         if (!file) throw new ConvexError("File not found");
+        const documentText = await file.text();
 
         const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
-        console.log("calling Gemini...");
+        const prompt = `
+        You are an expert document assistant.
+
+        Answer the question based only on the document below.
+
+        Rules:
+        - Use markdown formatting.
+        - Use bullet points when appropriate.
+        - If the document contains the answer, explain it clearly.
+        - If not found, say:
+        "I could not find that information in the document."
+        - Never use information outside the document.
+
+        DOCUMENT:
+        ${documentText}
+
+        QUESTION:
+        ${args.question}
+        `;
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: args.question,
+            contents: prompt,
         });
 
-        
-        console.log(response);
 
-        return {
-            text: response.text,
-            raw: JSON.stringify(response),
-        };
+        return response.text;
+
     },
 });

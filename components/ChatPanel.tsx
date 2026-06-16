@@ -4,14 +4,14 @@ import { api } from "../convex/_generated/api";
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Id } from "../convex/_generated/dataModel";
-
+import { SearchIcon } from "lucide-react";
 export default function ChatPanel({ DocumentId }: { DocumentId: Id<'documents'> }) {
     const askQuestion = useAction(api.documents.askQuestion);
     return (
-        <div className="flex flex-col justify-between max-h-100 gap-2">
-            <div className=" overflow-y-scroll">
+        <div className="flex flex-col h-full w-full justify-content items-center">
+            <div className=" flex-1 overflow-y-auto">
             </div>
-            <div className="flex gap-1">
+            <div className="border-t p-2 w-full">
                 <form onSubmit={async (e) => {
                     e.preventDefault();
                     const form = e.target as HTMLFormElement;
@@ -24,11 +24,14 @@ export default function ChatPanel({ DocumentId }: { DocumentId: Id<'documents'> 
                     });
 
                     console.log("ANSWER:", answer);
-                    console.log("TYPE:", typeof answer);
-
                 }}>
-                    <Input required name="text" className="bg-black" />
-                    <Button className="rounded-lg">Send</Button>
+                    {/*put them in the last*/}
+                    <div className="flex flex-row gap-2">
+                        <Input required name="text" className=" bg-black text-white overflow-x-auto" />
+                        <Button className="rounded-lg cursor-pointer "> 
+                            <SearchIcon />
+                        </Button>
+                    </div>
                 </form>
             </div>
         </div>
