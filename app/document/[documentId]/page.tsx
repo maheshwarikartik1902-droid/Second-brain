@@ -30,7 +30,7 @@ export default function DocumentPage({ params }: { params: Promise<{ documentId:
                     {document.documentUrl && <iframe className="w-full h-full" src={document.documentUrl} />}
                 </div>
                 <div className="w-75 bg-gray-900">
-                    <ChatPanel/>
+                    <ChatPanel DocumentId={document._id} />
                 </div>
             </div>
         </main>

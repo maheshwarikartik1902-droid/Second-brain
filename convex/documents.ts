@@ -77,36 +77,41 @@ export const askQuestion = action({
         DocumentId: v.id("documents"),
     },
     handler: async (ctx, args) => {
-        const user = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
-        if (!user) {
-            throw new ConvexError("User not authenticated");
 
-        }
+        const user = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
+        console.log("user", user);
+
+        if (!user) throw new ConvexError("User not authenticated");
+
         const document = await ctx.runQuery(api.documents.viewDocument, {
-            documentId: args.DocumentId
+            documentId: args.DocumentId,
         });
-        if (!document) {
-            throw new ConvexError("Document not found");
-        }
+        console.log("document", document);
+
+        if (!document) throw new ConvexError("Document not found");
         if (document.tokenIdentifier !== user) {
             throw new ConvexError("You are not the owner of this document");
         }
 
         const file = await ctx.storage.get(document.fileId);
-        if (!file) {
-            throw new ConvexError("File not found");
-        }
+        console.log("file exists?", !!file);
+
+        if (!file) throw new ConvexError("File not found");
+
         const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
-        async function main() {
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: 'Why is the sky blue?',
-            });
-            console.log(response.text);
-        }
+        console.log("calling Gemini...");
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: args.question,
+        });
 
-        main();
+        
+        console.log(response);
 
+        return {
+            text: response.text,
+            raw: JSON.stringify(response),
+        };
     },
 });
