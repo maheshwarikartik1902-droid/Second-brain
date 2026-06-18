@@ -117,7 +117,7 @@ export const askQuestion = action({
         ${documentText}
 
         QUESTION:
-        ${args.question}
+        ${args.question}   
         `;
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
