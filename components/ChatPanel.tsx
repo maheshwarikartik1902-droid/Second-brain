@@ -8,8 +8,11 @@ import { SearchIcon } from "lucide-react";
 export default function ChatPanel({ DocumentId }: { DocumentId: Id<'documents'> }) {
     const askQuestion = useAction(api.documents.askQuestion);
     return (
-        <div className="flex flex-col h-full w-full justify-content items-center">
-            <div className=" flex-1 overflow-y-auto">
+        <div className="flex flex-col h-full w-full justify-center items-centerv p-4">
+            <div className=" flex-1 overflow-y-auto w-full text-center space-y-2 ">
+                <div className="bg-[#121213] rounded p-2">
+                    Your chats Appear here
+                </div>
             </div>
             <div className="border-t p-2 w-full">
                 <form onSubmit={async (e) => {
