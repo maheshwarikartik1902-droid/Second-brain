@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const DocumentsTabs = () =>{
     return(
-    <Tabs defaultValue="account" className="w-[400px]">
+    <Tabs defaultValue="account" className="w-100">
         <TabsList>
             <TabsTrigger value="account">Documents</TabsTrigger>
             <TabsTrigger value="password">Chat</TabsTrigger>

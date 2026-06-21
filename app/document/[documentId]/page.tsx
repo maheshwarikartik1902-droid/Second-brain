@@ -39,7 +39,7 @@ export default function DocumentPage({ params }: { params: Promise<{ documentId:
                         </div>
                     </TabsContent>
                     <TabsContent value="password">
-                        <div className="h-[400px] bg-[#1d1e1f] ">
+                        <div className="h-100 bg-[#1d1e1f] ">
                             <ChatPanel DocumentId={document._id} />
                         </div>
                     </TabsContent>

@@ -5,14 +5,23 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Id } from "../convex/_generated/dataModel";
 import { SearchIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+
 export default function ChatPanel({ DocumentId }: { DocumentId: Id<'documents'> }) {
     const askQuestion = useAction(api.documents.askQuestion);
     return (
-        <div className="flex flex-col h-full w-full justify-center items-centerv p-4">
-            <div className=" flex-1 overflow-y-auto w-full text-center space-y-2 ">
-                <div className="bg-[#121213] rounded p-2">
+        <div className="flex flex-col h-full w-full justify-center items-center p-4">
+            <div className=" flex-1 overflow-y-auto w-fit space-y-2 ">
+                <div className="bg-[#121213] rounded p-2 item-left">
                     Your chats Appear here
                 </div>
+                {/*human text*/}
+                <div className={cn({
+                    "bg-[#242425] rounded p-2": true,
+                }, "rounded p-2 text-right item-right")}>
+                    Your chats Appear here
+                </div>
+
             </div>
             <div className="border-t p-2 w-full">
                 <form onSubmit={async (e) => {
