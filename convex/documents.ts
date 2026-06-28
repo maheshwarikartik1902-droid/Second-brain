@@ -52,6 +52,7 @@ export const createDocument = mutation({
         return document;
     },
 });
+
 export const viewDocument = query({
     args: {
         documentId: v.id("documents"),
