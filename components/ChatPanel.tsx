@@ -8,6 +8,7 @@ import { SearchIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { QuestionForm } from "@/app/document/[documentId]/QuestionForm";
 
 export default function ChatPanel({ DocumentId }: { DocumentId: Id<'documents'> }) {
     const askQuestion = useAction(api.documents.askQuestion);
@@ -15,9 +16,9 @@ export default function ChatPanel({ DocumentId }: { DocumentId: Id<'documents'> 
 
     return (
         <div className="flex flex-col h-full w-full justify-center items-center p-4">
-            <div className=" flex-1 overflow-y-auto w-fit space-y-2 ">
-                <div className="bg-[#121213] rounded p-2 item-center text-center">
-                    Your chats Appear here
+            <div className="flex-1 w-full overflow-y-auto space-y-4 px-4">
+                <div className="rounded p-2 item-center text-center">
+                    Recent chats
                 </div>
                 {/*human text*/}
 
@@ -31,13 +32,12 @@ export default function ChatPanel({ DocumentId }: { DocumentId: Id<'documents'> 
                     >
                         <div
                             className={cn(
-                                "max-w-[80%] rounded-2xl px-4 py-2 whitespace-pre-wrap",
+                                "prose prose-invert max-w-none rounded-2xl px-4 py-3",
                                 chat.isHuman
-                                    ? "bg-zinc-950 text-white rounded-br-sm"
-                                    : "bg-zinc-800 text-white rounded-bl-sm"
+                                    ? "bg-zinc-950 rounded-br-sm"
+                                    : "bg-zinc-800 rounded-bl-sm"
                             )}
                         >
-
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                 {chat.text}
                             </ReactMarkdown>
@@ -46,28 +46,10 @@ export default function ChatPanel({ DocumentId }: { DocumentId: Id<'documents'> 
                 ))}
 
             </div>
-            <div className="border-t p-2 w-full">
-                <form onSubmit={async (e) => {
-                    e.preventDefault();
-                    const form = e.target as HTMLFormElement;
-                    const formData = new FormData(form);
-                    const text = formData.get("text") as string;
-                    //quiery for askQuestion
-                    const answer = await askQuestion({
-                        question: text,
-                        DocumentId,
-                    });
-
-                    console.log("ANSWER:", answer);
-                }}>
-                    {/*put them in the last*/}
-                    <div className="flex flex-row gap-2">
-                        <Input required name="text" className=" bg-black text-white overflow-x-auto" />
-                        <Button className="rounded-lg cursor-pointer ">
-                            <SearchIcon />
-                        </Button>
-                    </div>
-                </form>
+            <div className="border-t p-3 w-full flex justify-center">
+                <div className="w-full max-w-3xl">
+                    <QuestionForm DocumentId={DocumentId} />
+                </div>
             </div>
         </div>
     )
