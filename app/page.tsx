@@ -5,14 +5,15 @@ import { api } from "../convex/_generated/api";
 import { DocumentCard } from "@/components/ui/document-card";
 import CreateDoumentButton from "@/components/ui/CreateDoumentButton";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 
 export function DocumentCardSkeleton() {
   return (
-    <div className="rounded-xl border p-4 space-y-3">
-      <Skeleton className="h-5 w-3/4" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-2/3" />
-      <Skeleton className="h-10 w-full rounded-md" />
+    <div className="rounded-md border-card-foreground p-4 space-y-3 bg-card flex flex-col gap-2">
+      <Skeleton className="h-5 w-3/4 rounded-sm" />
+      <Skeleton className="h-5 w-full rounded-sm" />
+      <Skeleton className="h-5 w-2/3 rounded-sm" />
+      <Skeleton className="h-8 w-1/2 rounded-md" />
     </div>
   );
 }
@@ -23,19 +24,30 @@ export function AuthenticatedDocuments() {
   if (documents === undefined) {
     return (
       <div className="grid grid-cols-4 gap-3">
-        {Array.from({ length: 8 }).map((_, i) => (
+        {Array.from({ length: 4 }).map((_, i) => (
           <DocumentCardSkeleton key={i} />
         ))}
       </div>
     );
   }
-  
+
+  if (documents.length === 0) {
+    return (
+      <div className="flex flex-col gap-5 justify-center items-center my-8">
+        <Image src="/document.svg" alt="No documents found" width={200} height={200} />
+        <h1 className="text-4xl font-bold">You have no documents</h1>
+        <CreateDoumentButton />
+      </div>
+    );
+  }
+
   return (
-  <div className = "grid grid-cols-4 gap-3  " >
-      { documents?.map((doc, index) => (
+    <div className="grid grid-cols-4 gap-3  " >
+      {documents?.map((doc, index) => (
         <DocumentCard key={index} document={doc} />
       ))}
-  </div >
+
+    </div >
   );
 }
 export default function Home() {
@@ -54,8 +66,9 @@ export default function Home() {
           <CreateDoumentButton />
         </div>
         <AuthenticatedDocuments />
+        
       </Authenticated>
-      
+
     </main>
   );
 }
