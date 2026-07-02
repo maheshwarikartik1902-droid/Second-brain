@@ -6,6 +6,8 @@ import { DocumentCard } from "@/components/ui/document-card";
 import CreateDoumentButton from "@/components/ui/CreateDoumentButton";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
+import { SignInButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
 export function DocumentCardSkeleton() {
   return (
@@ -23,50 +25,63 @@ export function AuthenticatedDocuments() {
 
   if (documents === undefined) {
     return (
-      <div className="grid grid-cols-4 gap-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <DocumentCardSkeleton key={i} />
-        ))}
-      </div>
-    );
-  }
+      <>
+        <div className="flex justify-between items-center my-8">
+          <h1 className="text-4xl font-bold">My Documents</h1>
+        </div>
 
-  if (documents.length === 0) {
-    return (
-      <div className="flex flex-col gap-5 justify-center items-center my-8">
-        <Image src="/document.svg" alt="No documents found" width={200} height={200} />
-        <h1 className="text-4xl font-bold">You have no documents</h1>
-        <CreateDoumentButton />
-      </div>
+        <div className="grid grid-cols-4 gap-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <DocumentCardSkeleton key={i} />
+          ))}
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="grid grid-cols-4 gap-3  " >
-      {documents?.map((doc, index) => (
-        <DocumentCard key={index} document={doc} />
-      ))}
+    <>
+      <div className="flex justify-between items-center my-8">
+        <h1 className="text-4xl font-bold">My Documents</h1>
 
-    </div >
+        {documents.length > 0 && <CreateDoumentButton />}
+      </div>
+
+      {documents.length === 0 ? (
+        <div className="flex flex-col gap-5 justify-center items-center my-8">
+          <Image
+            src="/document.svg"
+            alt="No documents found"
+            width={200}
+            height={200}
+          />
+          <h1 className="text-4xl font-bold">You have no documents</h1>
+          <CreateDoumentButton />
+        </div>
+      ) : (
+        <div className="grid grid-cols-4 gap-3">
+          {documents.map((doc) => (
+            <DocumentCard key={doc._id} document={doc} />
+          ))}
+        </div>
+      )}
+    </>
   );
 }
-export default function Home() {
-  const createDocument = useMutation(api.documents.createDocument);
 
+export default function Home() {
   return (
     <main className="p-24">
       <Unauthenticated>
         <div className="flex justify-between items-center my-8">
           Sign in to view your documents
+          <SignInButton mode="modal">
+            <Button size="sm">Sign In</Button>
+          </SignInButton>
         </div>
       </Unauthenticated>
       <Authenticated>
-        <div className="flex justify-between items-center my-8">
-          <h1 className="text-4xl font-bold">My Documents</h1>
-          <CreateDoumentButton />
-        </div>
         <AuthenticatedDocuments />
-        
       </Authenticated>
 
     </main>

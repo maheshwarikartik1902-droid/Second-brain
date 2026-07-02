@@ -1,10 +1,7 @@
 'use client'
 import { useAction, useQuery } from "convex/react"
 import { api } from "../convex/_generated/api";
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
 import { Id } from "../convex/_generated/dataModel";
-import { SearchIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -18,9 +15,10 @@ export default function ChatPanel({ DocumentId }: { DocumentId: Id<'documents'> 
         <div className="flex flex-col h-full w-full justify-center items-center p-4">
             <div className="flex-1 w-full overflow-y-auto space-y-4 px-4">
                 <div className="rounded p-2 item-center text-center">
-                    Recent chats
+                    {(chats?.length === 0)?
+                        (<p className="p-2 item-center text-center ">Ask your first question</p>) :
+                        (<p className="p-2 item-center text-center ">Recent chats</p>)}
                 </div>
-                {/*human text*/}
 
                 {chats?.map((chat) => (
                     <div
