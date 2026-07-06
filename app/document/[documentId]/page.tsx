@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Trash2Icon } from "lucide-react";
+import { DeleteDocumentButton } from "@/components/ui/DeleteDocumentButton";
 
 export function DocumentViewerSkeleton() {
     return (
@@ -42,12 +43,7 @@ export default function DocumentPage({ params }: { params: Promise<{ documentId:
         <main className="p-12">
             <div className="flex justify-between items-center">
                 <h1 className="text-4xl font-bold">{document.title}</h1>
-                <Button variant="destructive" className="group flex items-center gap-2 overflow-hidden  transition-all duration-300">            
-                    <Trash2Icon />                   
-                    <span className="max-w-0 opacity-0 whitespace-nowrap transition-all duration-300 ease-in-out group-hover:max-w-20 group-hover:opacity-100">
-                        Delete
-                    </span>
-                </Button>
+                <DeleteDocumentButton documentId={document._id} />
             </div>
 
             <div className="flex gap-12 mt-6">

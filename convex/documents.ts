@@ -151,3 +151,22 @@ export const askQuestion = action({
 
     },
 });
+
+export const deleteDocument = mutation({
+    args: {
+        documentId: v.id("documents"),
+    },
+    handler: async (ctx, args) => {
+        const document = await ctx.db.get("documents", args.documentId);
+        if (!document) {
+            throw new ConvexError("Document not found");
+        }
+        const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
+        if (document.tokenIdentifier !== userId) {
+            throw new ConvexError("You are not the owner of this document");
+        }
+
+        await ctx.storage.delete(document.fileId);
+        await ctx.db.delete("documents", args.documentId);
+    },
+});
