@@ -20,7 +20,7 @@ export function Header() {
                 </div>
                 </Link>
                 <nav>
-                    <Link href="/" className="text-primary/80 hover:text-foreground transition-colors">Documents</Link>
+                    <Link href="/dasboard" className="text-primary/80 hover:text-foreground transition-colors">Documents</Link>
                 </nav>
                 </div>
                 <div className="flex items-center gap-2">   
