@@ -19,9 +19,9 @@ export function Header() {
                     </span>
                 </div>
                 </Link>
-                <nav>
+                {/*<nav>
                     <Link href="/dasboard" className="text-primary/80 hover:text-foreground transition-colors">Documents</Link>
-                </nav>
+                </nav>*/}
                 </div>
                 <div className="flex items-center gap-2">   
                     <ModeToggle />
