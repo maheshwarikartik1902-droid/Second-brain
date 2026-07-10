@@ -2,31 +2,23 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
+
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
-    CardHeader,
-    CardTitle,
 } from "@/components/ui/card"
 import {
     Field,
-    FieldDescription,
     FieldError,
     FieldGroup,
     FieldLabel,
 } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroupTextarea,
-} from "@/components/ui/input-group"
 import { useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { Loader2 } from "lucide-react"
+import { Textarea } from "./textarea"
 
 
 const formSchema = z.object({
@@ -37,8 +29,8 @@ const formSchema = z.object({
 
 })
 
-export function CreateNoteForm({ onUpload }: { onUpload: () => void }) {
-    
+export function CreateNoteForm({ onNoteCreated }: { onNoteCreated: () => void }) {
+
     const createNote = useMutation(api.notes.createNote);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -47,11 +39,15 @@ export function CreateNoteForm({ onUpload }: { onUpload: () => void }) {
         },
     })
     async function onSubmit(data: z.infer<typeof formSchema>) {
-        
+
         await createNote({
             text: data.text
         });
-        onUpload();
+        onNoteCreated();
+        toast.success("Note Created",{
+            description: "Your note has been created successfully.",
+            position: "top-center"
+        })
     }
     return (
         <Card className="w-full sm:max-w-md">
@@ -67,12 +63,10 @@ export function CreateNoteForm({ onUpload }: { onUpload: () => void }) {
                                     <FieldLabel htmlFor="form-rhf-demo-title">
                                         Text
                                     </FieldLabel>
-                                    <Input
+                                    <Textarea
+                                        rows={8}
                                         {...field}
-                                        id="form-rhf-demo-title"
-                                        aria-invalid={fieldState.invalid}
                                         placeholder="Your note..."
-                                        autoComplete="off"
                                     />
                                     {fieldState.invalid && (
                                         <FieldError errors={[fieldState.error]} />

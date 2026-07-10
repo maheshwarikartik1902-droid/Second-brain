@@ -9,6 +9,11 @@ export default defineSchema({
         fileId: v.id("_storage"),
     }).index("by_token_identifier", ["tokenIdentifier"]),
 
+    notes: defineTable({
+        text: v.string(),
+        tokenIdentifier: v.string(),
+    }).index("by_token_identifier", ["tokenIdentifier"]),
+
     chats: defineTable({
         text: v.string(),
         tokenIdentifier: v.string(),

@@ -32,7 +32,7 @@ export default function CreateNoteButton() {
                         Create a note for you search over in the future.
                     </DialogDescription>
                 </DialogHeader>
-                <CreateNoteForm onUpload={() => setIsOpen(false)}/>
+                <CreateNoteForm onNoteCreated={() => setIsOpen(false)}/>
             </DialogContent>
         </Dialog>
 
