@@ -2,7 +2,6 @@
 import CreateNoteButton from "@/components/ui/CreateNoteButton";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import Link from "next/link";
 
 export default function NotesPage() {
     const notes = useQuery(api.notes.getNotes);
@@ -15,9 +14,7 @@ export default function NotesPage() {
             <div className="">
                 {notes && notes.map((note) => (
                     <div key={note._id} className="flex justify-between items-center ">
-                        <li>
-                            <Link href={`/dashboard/notes/${note._id}`}>{note.text.substring(0, 30)+"..."}</Link>
-                            </li>
+                        <li>{note.text.substring(0, 30)+"..."}</li>
                     </div>
                 ))}
             </div>

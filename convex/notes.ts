@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const createNote = mutation({
     args:{
@@ -15,5 +15,17 @@ export const createNote = mutation({
             tokenIdentifier: userId
         });
         return await ctx.db.get("notes", note);
+    }
+})
+
+export const getNotes = query({
+    async handler(ctx){
+        const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
+        if(!userId){
+            throw new ConvexError("Unauthorized");
+        };
+        const notes = await ctx.db.query("notes").withIndex("by_token_identifier", (q) => q.eq("tokenIdentifier", userId))
+        .collect();
+        return notes;
     }
 })
