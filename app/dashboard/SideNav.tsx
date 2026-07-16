@@ -52,7 +52,7 @@ export default function SideNav() {
                                 )}
                             >
                                 {active && (
-                                    <span className="absolute left-0 h-6     w-0.5 rounded-r-full bg-primary" />
+                                    <span className="absolute left-0 h-6 w-0.5 rounded-r-full bg-primary" />
                                 )}
 
                                 <Icon className="h-5 w-5" />

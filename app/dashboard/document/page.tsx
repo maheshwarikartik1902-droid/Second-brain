@@ -41,7 +41,7 @@ export function AuthenticatedDocuments() {
 
   return (
     <>
-      <div className="flex justify-between items-center my-8">
+      <div className="flex justify-between items-center my-6">
         <h1 className="text-4xl font-bold">My Documents</h1>
 
         {documents.length > 0 && <CreateDoumentButton />}

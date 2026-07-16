@@ -9,12 +9,9 @@ export default function DashboardLayout({
 }>) {
     return (
         <div>
-            <div className="flex min-h-screen m-auto">
-                
+            <div className="flex min-h-screen m-auto">       
                     {/* sidebar */}
                     <SideNav />
-
-
                 <main className="flex-1 p-4">
                     {children}
                 </main>

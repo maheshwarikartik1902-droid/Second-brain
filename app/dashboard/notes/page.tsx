@@ -7,8 +7,8 @@ import Link from "next/link";
 export default function NotesPage() {
     const notes = useQuery(api.notes.getNotes);
     return (
-        <div className="w-full space-y-8">
-            Notes preview
+        <div className="flex justify-center items-center my-4 text-center">
+            <h1 className="text-xl">Notes preview</h1>
         </div>
     )
 }
