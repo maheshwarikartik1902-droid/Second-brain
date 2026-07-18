@@ -20,8 +20,9 @@ export default function NotesPage() {
                 <DeleteNoteButton noteId={noteId}/>
             </div>
 
-            <h1 className="text-xl ">
-                {note?.text}</h1>
+            <h1 className="text-xl mx-2 mt-6">
+                {note?.text}
+            </h1>
         </div>
     )
 }

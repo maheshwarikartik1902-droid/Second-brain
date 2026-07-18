@@ -67,6 +67,7 @@ export function CreateNoteForm({ onNoteCreated }: { onNoteCreated: () => void })
                                         rows={8}
                                         {...field}
                                         placeholder="Your note..."
+                                        className="max-h-80 overflow-y-auto resize-y"
                                     />
                                     {fieldState.invalid && (
                                         <FieldError errors={[fieldState.error]} />

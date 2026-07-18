@@ -5,19 +5,37 @@ import { useQuery } from "convex/react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
+
 
 export default function NotesLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const notes = useQuery(api.notes.getNotes);
+
+    const hasNotes = notes && notes.length > 0;
     return (
-        <div className="w-full">
+        <div className="">
             <div className="flex justify-between items-center my-6">
                 <h1 className="text-4xl font-bold">My Notes</h1>
-                <CreateNoteButton />
+                {hasNotes && <CreateNoteButton />}
             </div>
-
+            {
+                !hasNotes && (
+                    <div className="flex flex-col gap-5 justify-center items-center my-8">
+                        <Image
+                            src="/document.svg"
+                            alt="No documents found"
+                            width={200}
+                            height={200}
+                        />
+                        <h1 className="text-4xl font-bold">You have no Notes</h1>
+                        <CreateNoteButton />
+                    </div>
+                )
+            }
+            { hasNotes && 
             <div className="flex flex-row gap-5">
-                <ul className="space-y-2 w-1/4">
+                <ul className="space-y-2 w-1/4 min-w-64 max-w-sm shrink-0">
                     {notes && notes.map((note) => {
                         const active = pathname === `/dashboard/notes/${note._id}`;
                         return (
@@ -25,7 +43,7 @@ export default function NotesLayout({ children }: { children: React.ReactNode })
                                 <Link
                                     href={`/dashboard/notes/${note._id}`}
                                     className={cn(
-                                        "relative flex items-center rounded-xl px-4 py-2 transition",
+                                        "relative flex w-full items-center rounded-xl px-4 py-2 transition",
                                         active
                                             ? "bg-accent border border-border"
                                             : "hover:bg-accent"
@@ -35,7 +53,7 @@ export default function NotesLayout({ children }: { children: React.ReactNode })
                                         <span className="absolute left-0 h-6 w-0.5 rounded-r-full bg-primary" />
                                     )}
 
-                                    <span className="truncate">
+                                    <span className="min-w-0 flex-1 truncate">
                                         {note.text}
                                     </span>
                                 </Link>
@@ -48,6 +66,7 @@ export default function NotesLayout({ children }: { children: React.ReactNode })
                     {children}
                 </div>
             </div>
-        </div>
+}
+        </div>          
     )
 }
