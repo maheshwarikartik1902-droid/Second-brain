@@ -1,10 +1,10 @@
 'use client'
 import { Button } from "@/components/ui/button";
 import CreateNoteButton from "@/components/ui/CreateNoteButton";
+import { DeleteNoteButton } from "@/components/ui/DeleteNoteButton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { Trash2Icon } from "lucide-react";
 import { useParams } from "next/navigation";
 
 export default function NotesPage() {
@@ -16,12 +16,11 @@ export default function NotesPage() {
     return (
 
         <div className="flex justify-between items-center my-4 relative">
+            <div className="absolute -top-5 -right-1">
+                <DeleteNoteButton noteId={noteId}/>
+            </div>
+
             <h1 className="text-xl ">
-                <Button className="absolute -top-5 -right-1"
-                size="icon" 
-                variant="destructive">
-                    <Trash2Icon />
-                </Button>
                 {note?.text}</h1>
         </div>
     )

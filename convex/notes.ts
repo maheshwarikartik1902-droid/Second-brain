@@ -48,3 +48,22 @@ export const getNote = query({
         return note;
     }
 })
+
+
+export const deleteNote = mutation({
+    args: {
+        noteId: v.id("notes"),
+    },
+    handler: async (ctx, args) => {
+        const note = await ctx.db.get("notes", args.noteId);
+        if (!note) {
+            throw new ConvexError("Document not found");
+        }
+        const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
+        if (note.tokenIdentifier !== userId) {
+            throw new ConvexError("You are not the owner of this note");
+        }
+
+        await ctx.db.delete(args.noteId);
+    },
+});
