@@ -11,6 +11,7 @@
 import type * as chats from "../chats.js";
 import type * as documents from "../documents.js";
 import type * as notes from "../notes.js";
+import type * as search from "../search.js";
 
 import type {
   ApiFromModules,
@@ -22,6 +23,7 @@ declare const fullApi: ApiFromModules<{
   chats: typeof chats;
   documents: typeof documents;
   notes: typeof notes;
+  search: typeof search;
 }>;
 
 /**

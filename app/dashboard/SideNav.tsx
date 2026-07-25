@@ -5,11 +5,17 @@ import {
     ClipboardPenIcon,
     CogIcon,
     FilesIcon,
+    SearchIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
+    {
+        name: "Search",
+        href: "/dashboard/search",
+        icon: SearchIcon,
+    },
     {
         name: "Documents",
         href: "/dashboard/document",

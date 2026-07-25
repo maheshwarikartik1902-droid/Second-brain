@@ -5,7 +5,7 @@ import { Id } from "../convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { QuestionForm } from "@/app/document/[documentId]/QuestionForm";
+import { QuestionForm } from "@/app/dashboard/document/[documentId]/QuestionForm";
 
 export default function ChatPanel({ DocumentId }: { DocumentId: Id<'documents'> }) {
     const askQuestion = useAction(api.documents.askQuestion);

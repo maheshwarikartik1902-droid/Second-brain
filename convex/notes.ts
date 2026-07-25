@@ -4,7 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 import { internal } from "./_generated/api";
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-async function getEmbedding(text: string) {
+export async function getEmbedding(text: string) {
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
     const response = await ai.models.embedContent({
     model: "gemini-embedding-001",
