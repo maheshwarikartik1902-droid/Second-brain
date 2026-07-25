@@ -1,5 +1,43 @@
-import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { ConvexError, GenericId, v, VArray, VFloat64, VId } from "convex/values";
+import { internalAction, internalMutation, mutation, query } from "./_generated/server";
+import { GoogleGenAI } from "@google/genai";
+import { internal } from "./_generated/api";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
+async function getEmbedding(text: string) {
+    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    const response = await ai.models.embedContent({
+    model: "gemini-embedding-001",
+    contents: text,
+    });
+    return response.embeddings?.[0].values ?? [];
+}
+export const setNoteEmbedding = internalMutation({
+    args:{
+        noteId: v.id("notes"),
+        embedding: v.array(v.float64()),
+    },
+
+
+    async handler(ctx, args){
+        await ctx.db.patch(args.noteId, {
+            embedding: args.embedding,
+        })
+    }
+})
+export const createNoteEmbedding = internalAction({
+    args:{
+        noteId: v.id("notes"),
+        text: v.string(),
+    },
+    async handler(ctx, args){
+        
+        const embedding = await getEmbedding(args.text);
+        await ctx.runMutation(internal.notes.setNoteEmbedding, {
+            noteId: args.noteId, 
+            embedding: embedding});
+    }
+})
 
 export const createNote = mutation({
     args:{
@@ -10,11 +48,15 @@ export const createNote = mutation({
         if(!userId){
             throw new ConvexError("Unauthorized");
         };
-        const note = await ctx.db.insert("notes", {
+        const noteId = await ctx.db.insert("notes", {
             text: args.text, 
             tokenIdentifier: userId
+        });``
+        await ctx.scheduler.runAfter(0, internal.notes.createNoteEmbedding, {
+            noteId: noteId, 
+            text: args.text
         });
-        return await ctx.db.get("notes", note);
+        return await ctx.db.get("notes", noteId);
     }
 })
 
@@ -67,3 +109,7 @@ export const deleteNote = mutation({
         await ctx.db.delete(args.noteId);
     },
 });
+
+function internalmMutation(arg0: { args: { noteId: VId<GenericId<"notes">, "required">; embeedding: VArray<number[], VFloat64<number, "required">, "required">; }; handler(ctx: any, args: any): Promise<any>; }) {
+    throw new Error("Function not implemented.");
+}
