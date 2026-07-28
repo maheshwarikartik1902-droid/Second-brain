@@ -20,15 +20,23 @@ export const searchAction = action({
             filter: (q) => q.eq("tokenIdentifier", userId),
         });
 
+
+        const filtered = results.filter(
+            (r) => r._score > 0.5
+        );
+
         const notes = (
             await Promise.all(
-                results.map((result) =>
-                    ctx.runQuery(api.notes.getNote, {
+                filtered.map(async (result) => {
+                    const note = await ctx.runQuery(api.notes.getNote, {
                         noteId: result._id,
-                    })
-                )
+                    });
+                    if (!note) return null;
+                    return { ...note, _score: result._score };
+                })
             )
-        ).filter(Boolean) as Doc<"notes">[];
+        ).filter(Boolean) as (Doc<"notes"> & { _score: number })[];
+
 
         return notes;
     },
