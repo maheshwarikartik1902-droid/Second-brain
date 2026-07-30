@@ -4,6 +4,18 @@ import { Doc } from "./_generated/dataModel";
 import { getEmbedding } from "./notes";
 import { api } from "./_generated/api";
 
+export type NoteSearchResult = Doc<"notes"> & {
+    _score: number;
+    type: "note";
+};
+
+export type DocumentSearchResult = Doc<"documents"> & {
+    _score: number;
+    type: "document";
+};
+
+export type SearchResult = NoteSearchResult | DocumentSearchResult;
+
 export const searchAction = action({
     args: {
         search: v.string(),
@@ -25,19 +37,21 @@ export const searchAction = action({
             (r) => r._score > 0.5
         );
 
-        const notes = (
+        const notes: SearchResult[] = (
             await Promise.all(
                 filtered.map(async (result) => {
                     const note = await ctx.runQuery(api.notes.getNote, {
                         noteId: result._id,
                     });
                     if (!note) return null;
-                    return { ...note, _score: result._score };
+                    return {
+                        ...note,
+                        _score: result._score,
+                        type: "note" as const,
+                    };
                 })
             )
-        ).filter(Boolean) as (Doc<"notes"> & { _score: number })[];
-
-
+        ).filter((item) => item !== null);
         return notes;
     },
 });
