@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
+import Link from "next/link";
 
 export default function SearchPage() {
     const [results, setResults] = useState<(typeof api.search.searchAction._returnType | null)>(null);
@@ -94,6 +95,7 @@ export default function SearchPage() {
                             {results.map((result) => {
                                 if (result.type === "note") {
                                     return (
+                                        <Link key={result._id} href={`/dashboard/notes/${result._id}`}>
                                         <Card key={result._id}>
                                             <CardContent>
                                                 <p>
@@ -107,23 +109,29 @@ export default function SearchPage() {
                                                 </span>
                                             </CardContent>
                                         </Card>
+                                        </Link>
                                     );
                                 }
                                 else {
                                     return (
+                                        <Link key={result._id} href={`/dashboard/documents/${result._id}`}>
                                         <Card key={result._id}>
-                                            <CardContent>
+                                            <CardContent className="flex flex-col">
                                                 <p>
-                                                    {result.title.length > 230
-                                                        ? result.title.substring(0, 230) + "..."
-                                                        : result.title}
+                                                    {result.title}
                                                 </p>
-
+                                                <p>
+                                                    {result.content.length > 230
+                                                        ? result.content.substring(0, 230) + "..."
+                                                        : result.content}
+                                                </p>
+                                                        
                                                 <span>
                                                     {(result._score * 100).toFixed(1)}% Match
                                                 </span>
                                             </CardContent>
                                         </Card>
+                                        </Link> 
                                     );
                                 }
                             })}

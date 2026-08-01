@@ -1,25 +1,26 @@
-import { MutationCtx, QueryCtx } from './_generated/server.d';
+import { internalAction, internalMutation, ActionCtx, MutationCtx, QueryCtx } from "./_generated/server";
 import { api, internal } from './_generated/api';
 import { action, mutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { GoogleGenAI } from '@google/genai';
 import { Id } from './_generated/dataModel';
+import { getEmbedding } from './notes';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 
 export async function hasAccessToDocument(ctx: MutationCtx | QueryCtx, documentId: Id<"documents">) {
     const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
-        if (!userId) {
-            return null;
-        }
+    if (!userId) {
+        return null;
+    }
 
-        const document = await ctx.db.get("documents", documentId);
-        if (!document) {
-            return null;
-        }
-        if (document.tokenIdentifier !== userId) {
-            return null;
-        }
+    const document = await ctx.db.get("documents", documentId);
+    if (!document) {
+        return null;
+    }
+    if (document.tokenIdentifier !== userId) {
+        return null;
+    }
 };
 
 export const generateUploadUrl = mutation({
@@ -43,15 +44,56 @@ export const createDocument = mutation({
         if (!userId) {
             throw new ConvexError("User not authenticated");
         }
-        const document = await ctx.db.insert("documents", {
+        const documentId = await ctx.db.insert("documents", {
             title: args.title,
             content: args.content,
             tokenIdentifier: userId,
             fileId: args.fileId
         });
-        return document;
+        
+        await ctx.scheduler.runAfter(0, internal.documents.createDocumentEmbedding, {
+            documentId: documentId,
+            fileId: args.fileId
+        });
+        return documentId;
     },
 });
+
+export const setDocumentEmbedding = internalMutation({
+    args:{
+        documentId: v.id("documents"),
+        embedding: v.array(v.float64()),
+    },
+
+
+    async handler(ctx, args){
+        await ctx.db.patch(args.documentId, {
+            embedding: args.embedding,
+        })
+    }
+})
+
+
+export const createDocumentEmbedding = internalAction({
+    args: {
+        documentId: v.id("documents"),
+        fileId: v.id("_storage"),
+    }
+    , handler: async (ctx, args) => {
+        const file = await ctx.storage.get(args.fileId);
+        if (!file) {
+            throw new ConvexError("File not found");
+        }
+        const text = await file.text();
+        console.log(text);
+        const embedding = await getEmbedding(text);
+        await ctx.runMutation(internal.documents.setDocumentEmbedding, { 
+            documentId: args.documentId, 
+            embedding 
+        });
+    }
+}) 
+
 
 export const viewDocument = query({
     args: {
@@ -60,8 +102,8 @@ export const viewDocument = query({
     handler: async (ctx, args) => {
         const document = await ctx.db.get("documents", args.documentId);
 
-        if(!document) throw new ConvexError("Document not found");
-        
+        if (!document) throw new ConvexError("Document not found");
+
         return { ...document, documentUrl: await ctx.storage.getUrl(document.fileId) };
     },
 
@@ -133,19 +175,19 @@ export const askQuestion = action({
             contents: prompt,
         });
         const responseText = response.text ?? "Could not generate response";
-        
-        await ctx.runMutation(internal.chats.storeChats, { 
-            text: args.question, 
-            tokenIdentifier: user, 
-            DocumentId: args.DocumentId, 
-            isHuman: true 
+
+        await ctx.runMutation(internal.chats.storeChats, {
+            text: args.question,
+            tokenIdentifier: user,
+            DocumentId: args.DocumentId,
+            isHuman: true
         });
 
-        await ctx.runMutation(internal.chats.storeChats, { 
-            text: responseText, 
-            tokenIdentifier: user, 
-            DocumentId: args.DocumentId, 
-            isHuman: false 
+        await ctx.runMutation(internal.chats.storeChats, {
+            text: responseText,
+            tokenIdentifier: user,
+            DocumentId: args.DocumentId,
+            isHuman: false
         });
         return responseText;
 
