@@ -40,7 +40,7 @@ export default function DocumentPage({ params }: { params: Promise<{ documentId:
         );
     }
     return (
-        <main className="p-12">
+        <main className="px-6 py-4">
             <div className="flex justify-between items-center">
                 <h1 className="text-4xl font-bold">{document.title}</h1>
                 <DeleteDocumentButton documentId={document._id} />

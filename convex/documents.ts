@@ -109,6 +109,17 @@ export const viewDocument = query({
 
 })
 
+export const getDocument = query({
+    args: {
+        documentId: v.id("documents"),
+    },
+    handler: async (ctx, args) => {
+        const document = await ctx.db.get("documents", args.documentId);
+        if (!document) throw new ConvexError("Document not found");
+        return document;
+    },
+})
+
 export const getDocuments = query({
     handler: async (ctx) => {
         const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;

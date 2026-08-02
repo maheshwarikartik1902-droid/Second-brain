@@ -23,7 +23,7 @@ export const DocumentCard = ({ document }: { document: Doc<'documents'> }) => {
         <p>{document.content}</p>
       </CardContent>
       <CardFooter>
-        <Link href={`/document/${document._id}`}>
+        <Link href={`/dashboard/document/${document._id}`}>
           <Button className="rounded-lg cursor-pointer"
             variant="secondary">
             <Eye className=" h-4 w-4" />
