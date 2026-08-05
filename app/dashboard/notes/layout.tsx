@@ -18,7 +18,7 @@ export default function NotesLayout({ children }: { children: React.ReactNode })
         <div className="">
             <div className="flex justify-between items-center my-6">
                 <h1 className="text-4xl font-bold">My Notes</h1>
-                {notes && <CreateNoteButton />}
+                <CreateNoteButton />
             </div>
             <div className="space-y-6">
 

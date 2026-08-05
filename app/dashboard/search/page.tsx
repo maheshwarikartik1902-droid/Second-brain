@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowUpRight, FileText, NotebookPen, Search } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { Doc } from "@/convex/_generated/dataModel";
@@ -18,12 +18,29 @@ import { Badge } from "@/components/ui/badge";
 export default function SearchPage() {
     const [results, setResults] = useState<(typeof api.search.searchAction._returnType | null)>(null);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (results) {
+            localStorage.setItem("searchResults", JSON.stringify(results));
+        }
+    }, [results]);
+
+    useEffect(() => {
+        const stored = localStorage.getItem("searchResults");
+        if (stored) {
+            setResults(JSON.parse(stored));
+        }
+    }, []);
+
     return (
         <div className="mx-auto max-w-4xl py-8 space-y-8">
 
             {/* Search Form */}
             <div className="w-full">
-                <SearchForm setResults={setResults} setIsLoading={setLoading} />
+                <SearchForm
+                    setResults={setResults}
+                    setIsLoading={setLoading}
+                />
             </div>
 
             {/* Initial State */}
