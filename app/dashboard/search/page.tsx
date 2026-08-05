@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { ArrowUpRight, FileText, NotebookPen, Search } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { Doc } from "@/convex/_generated/dataModel";
 import { SearchForm } from "./SearchForm";
@@ -13,6 +13,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 
 export default function SearchPage() {
     const [results, setResults] = useState<(typeof api.search.searchAction._returnType | null)>(null);
@@ -91,49 +92,70 @@ export default function SearchPage() {
                             </CardContent>
                         </Card>
                     ) : (
-                        <div className="space-y-2">
+                        <div className="flex flex-col gap-2 ">
                             {results.map((result) => {
-                                if (result.type === "note") {
-                                    return (
-                                        <Link key={result._id} href={`/dashboard/notes/${result._id}`}>
-                                        <Card key={result._id}>
-                                            <CardContent>
-                                                <p>
-                                                    {result.text.length > 230
-                                                        ? result.text.substring(0, 230) + "..."
-                                                        : result.text}
-                                                </p>
+                                const href =
+                                    result.type === "note"
+                                        ? `/dashboard/notes/${result._id}`
+                                        : `/dashboard/document/${result._id}`;
 
-                                                <span>
-                                                    {(result._score * 100).toFixed(1)}% Match
-                                                </span>
+                                return (
+                                    <Link key={result._id} href={href}>
+                                        <Card className="group cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lg">
+                                            <CardContent className="space-y-2">
+
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-2">
+
+                                                        {result.type === "note" ? (
+                                                            <>
+                                                                <NotebookPen className="h-5 w-5 text-primary" />
+                                                                <Badge variant="secondary">
+                                                                    Note
+                                                                </Badge>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <FileText className="h-5 w-5 text-primary" />
+                                                                <Badge variant="secondary">
+                                                                    Document
+                                                                </Badge>
+                                                            </>
+                                                        )}
+
+                                                    </div>
+
+                                                    <div className="flex items-center gap-3">
+                                                        <Badge variant="outline">
+                                                            {(result._score * 100).toFixed(0)}% Match
+                                                        </Badge>
+
+                                                        <ArrowUpRight className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
+                                                    </div>
+                                                </div>
+
+                                                {/* Content */}
+
+                                                {result.type === "note" ? (
+                                                    <p className="text-sm leading-7 text-muted-foreground line-clamp-4">
+                                                        {result.text}
+                                                    </p>
+                                                ) : (
+                                                    <div className="space-y-2">
+                                                        <h3 className="font-semibold text-lg">
+                                                            {result.title}
+                                                        </h3>
+
+                                                        <p className="text-sm text-muted-foreground leading-7 line-clamp-3">
+                                                            {result.content}
+                                                        </p>
+                                                    </div>
+                                                )}
+
                                             </CardContent>
                                         </Card>
-                                        </Link>
-                                    );
-                                }
-                                else {
-                                    return (
-                                        <Link key={result._id} href={`/dashboard/documents/${result._id}`}>
-                                        <Card key={result._id}>
-                                            <CardContent className="flex flex-col">
-                                                <p>
-                                                    {result.title}
-                                                </p>
-                                                <p>
-                                                    {result.content.length > 230
-                                                        ? result.content.substring(0, 230) + "..."
-                                                        : result.content}
-                                                </p>
-                                                        
-                                                <span>
-                                                    {(result._score * 100).toFixed(1)}% Match
-                                                </span>
-                                            </CardContent>
-                                        </Card>
-                                        </Link> 
-                                    );
-                                }
+                                    </Link>
+                                );
                             })}
                         </div>
                     )}

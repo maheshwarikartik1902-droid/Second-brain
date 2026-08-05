@@ -31,7 +31,7 @@ export const searchAction = action({
             limit: 3,
             filter: (q) => q.eq("tokenIdentifier", userId),
         });
-        
+
         const documentResults = await ctx.vectorSearch("documents", "by_embedding", {
             vector: embedding,
             limit: 3,
@@ -68,6 +68,7 @@ export const searchAction = action({
                     const document = await ctx.runQuery(api.documents.getDocument, {
                         documentId: documentResult._id,
                     });
+                    console.log(document);
                     if (!document) return null;
                     return {
                         ...document,
@@ -77,6 +78,8 @@ export const searchAction = action({
                 })
             )
         ).filter((item) => item !== null);
-        return notes.concat(documents);
+        return [...notes, ...documents].sort(
+            (a, b) => b._score - a._score
+        );
     },
 });
