@@ -8,7 +8,7 @@ const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL as strin
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY} proxyUrl="/__clerk">
+        <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY} proxyUrl={process.env.NEXT_PUBLIC_CLERK_PROXY_URL}>
             <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
                 {children}
             </ConvexProviderWithClerk>
