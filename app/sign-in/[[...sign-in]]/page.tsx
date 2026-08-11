@@ -43,7 +43,7 @@ export default function SignInPage() {
                     
                     <div className="w-full max-w-md">
                         <SignIn
-                            forceRedirectUrl="/dashboard"
+                            forceRedirectUrl="/dashboard/document"
                             appearance={{
                                 elements: {
                                     rootBox: "w-full",

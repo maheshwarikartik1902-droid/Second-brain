@@ -41,7 +41,7 @@ export default function NotesLayout({ children }: { children: React.ReactNode })
             </div>
 
             {
-                !hasNotes && (
+                (notes &&!hasNotes) && (
                     <div className="flex flex-col gap-5 justify-center items-center my-8">
                         <Image
                             src="/document.svg"
